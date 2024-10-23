@@ -62,7 +62,7 @@ pipeline AirportsPipeline {
         // ];
     // }
 
-    // 14. As a next step, we interpret the sheet as a table by adding structure.
+    // 12. As a next step, we interpret the sheet as a table by adding structure.
     // We define a valuetype per column that specifies the data type of the column.
     // Rows that include values that are not valid according to the their valuetypes are dropped automatically. 
     block AirportsTableInterpreter oftype TableInterpreter {
@@ -81,7 +81,7 @@ pipeline AirportsPipeline {
         ];
     }
 
-    // 15. As a last step, we load the table into a sink,
+    // 13. As a last step, we load the table into a sink,
     // here into a sqlite file.
     // The structural information of the table is used
     // to generate the correct table.
