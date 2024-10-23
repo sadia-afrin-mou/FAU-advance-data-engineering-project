@@ -1,7 +1,8 @@
 // Exercise 1: Automated data pipeline of Airports  
 
 // As my OS is windows and with the v0.6.2 it gives problem related to windows path [issue: https://github.com/jvalue/jayvee/issues/623],
-// I have run this script withS v0.4.0, but I think it might also run on the v0.6.2
+// I have run this script withS v0.4.0, but I think it might also run on the v0.6.2.
+// It passed the github action workflow: exercise-feedback
 
 // This Jayvee model describes a pipeline 
 // from a CSV file of Airports data parsed from a URL 
