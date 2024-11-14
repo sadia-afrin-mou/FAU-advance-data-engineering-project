@@ -80,7 +80,18 @@ def preprocess_renewable_energy(df):
     """Preprocess renewable energy dataset"""
     # Basic data validation
     assert not df.empty, "Renewable energy dataset is empty"
-    assert df.duplicated().sum() == 0, "Found duplicates in renewable energy data"
+    # Handle duplicates
+    if df.duplicated().sum() > 0:
+        print(f"Found {df.duplicated().sum()} duplicates in renewable energy data. Removing duplicates...")
+        df = df.drop_duplicates()
+    
+    # Check for missing values
+    missing_values = df.isnull().sum()
+    if missing_values.any():
+        print("Found missing values. Filling with forward fill method...")
+        df = df.fillna(method='ffill')
+        # For any remaining NaN at the start, fill with backward fill
+        df = df.fillna(method='bfill')
     
     # Return the original dataframe as we want to keep the raw structure
     return df
@@ -89,7 +100,18 @@ def preprocess_pollution(df):
     """Preprocess pollution dataset"""
     # Basic data validation
     assert not df.empty, "Pollution dataset is empty"
-    assert df.duplicated().sum() == 0, "Found duplicates in pollution data"
+
+    if df.duplicated().sum() > 0:
+        print(f"Found {df.duplicated().sum()} duplicates in pollution data. Removing duplicates...")
+        df = df.drop_duplicates()
+    
+    # Check for missing values
+    missing_values = df.isnull().sum()
+    if missing_values.any():
+        print("Found missing values. Filling with forward fill method...")
+        df = df.fillna(method='ffill')
+        # For any remaining NaN at the start, fill with backward fill
+        df = df.fillna(method='bfill')
     
     # Convert Date column to datetime
     df['Date'] = pd.to_datetime(df['Date'])
