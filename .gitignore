@@ -3,3 +3,8 @@
 !/data/.gitkeep
 venv/
 .idea/
+data-sources/
+data-sources/*
+*.pyc
+__pycache__/
+.pytest_cache/
