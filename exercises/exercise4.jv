@@ -1,0 +1,104 @@
+pipeline TemperaturePipeline {
+
+    TemperatureExtractor
+        -> TemperatureArchiveInterpreter
+        -> TemperatureFilePicker
+        -> TemperatureTextFileInterpreter
+        -> TemperatureCSVInterpreter 
+        -> TemperatureColumnDeleter
+        -> TemperatureRowDeleter
+        -> TemperatureCellRangeSelector
+        -> TemperatureTableInterpreter
+        -> TemperatureTransformer
+        -> BatteryTemperatureTransformer
+        -> TemperatureLoader;
+
+    block TemperatureExtractor oftype HttpExtractor 
+    {
+        url: "https://www.mowesta.com/data/measure/mowesta-dataset-20221107.zip";
+    } 
+
+    block TemperatureArchiveInterpreter oftype ArchiveInterpreter 
+    {
+        archiveType: "zip";
+
+    }
+    block TemperatureFilePicker oftype FilePicker      
+    {
+        path: "/data.csv";
+    }
+
+    block TemperatureTextFileInterpreter oftype TextFileInterpreter { encoding: "utf8";}
+    block TemperatureCSVInterpreter oftype CSVInterpreter 
+    {
+        delimiter: ";";
+    }
+    
+
+    block TemperatureColumnDeleter oftype ColumnDeleter
+    {
+        delete: [column F,column G,column H,column I];
+    }
+
+    // ignore the first row
+    block TemperatureRowDeleter oftype RowDeleter 
+    {
+        delete: [row 1];
+    }
+    // ignore all columns to the right of the first “​​Geraet aktiv”
+    block TemperatureCellRangeSelector oftype CellRangeSelector   
+    {
+        select: range A1:F*;
+    }
+
+    // Translate/rename column headers from German to English
+    block TemperatureTableInterpreter oftype TableInterpreter 
+    {
+        header : false;
+        columns : [
+            "id" oftype positiveInteger,
+            "producer" oftype text,
+            "model" oftype text,
+            "month" oftype integer,
+            "temperature" oftype decimal,
+            "battery_temperature" oftype decimal,
+        ];
+    }
+
+    block TemperatureLoader oftype SQLiteLoader 
+    {
+        table: "temperatures";
+        file: "./temperatures.sqlite";
+    }
+    
+    // Transform temperatures in Celsius to Fahrenheit 
+    block TemperatureTransformer oftype TableTransformer 
+    {
+        inputColumns: ['temperature'];
+        outputColumn: 'temperature';
+        uses: CelsiusToFahrenheit;
+    }
+
+    block BatteryTemperatureTransformer oftype TableTransformer 
+    {
+        inputColumns: ['battery_temperature'];
+        outputColumn: 'battery_temperature';
+        uses: CelsiusToFahrenheit;
+    }
+
+    transform CelsiusToFahrenheit 
+    {
+        from tempCelsius oftype decimal;
+        to tempFahrenheit oftype decimal;
+        tempFahrenheit: (tempCelsius * 9/5) + 32;
+    }
+
+    // Use validations as you see fit, e.g., for “Geraet” to be an id over 0
+    valuetype positiveInteger oftype integer
+    {
+        constraints: [setPositiveInteger];
+    }
+    constraint setPositiveInteger on decimal:
+        value > 0;
+
+}
