@@ -8,3 +8,9 @@ data-sources/*
 *.pyc
 __pycache__/
 .pytest_cache/
+.env
+*.db
+kaggle.json
+*.sqlite
+*.vsix
+*.log
