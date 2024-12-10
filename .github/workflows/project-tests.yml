@@ -4,8 +4,9 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'project/**'
+    # Removing the paths filter for now
+    # paths:
+    #   - 'project/**'
 
 jobs:
   test:
