@@ -35,7 +35,7 @@ pipeline StopsPipeline
         header : true;
         columns : [
             "stop_id" oftype integer,
-            "stop_name" oftype GermanUmlautsText,
+            "stop_name" oftype text,
             "stop_lat" oftype GeoCoordinates,
             "stop_lon" oftype GeoCoordinates,
             "zone_id" oftype Zone,
@@ -48,16 +48,6 @@ pipeline StopsPipeline
         table: "stops";
 
     }
-
-    // stop_name must be a text but must maintain german umlauts (ä, ö, ü, ...)
-    constraint GermanUmlautsRegex oftype RegexConstraint {
-        regex: /[äöüÄÖÜ]/;
-    }
-
-    valuetype GermanUmlautsText oftype text {
-        constraints:[GermanUmlautsRegex];
-    }
-
 
     // stop_lat/stop_lon must be a geographic coordinates between -90 and 90, including upper/lower bounds
     constraint ValidGeoCoordinates on decimal:
